@@ -14,7 +14,6 @@ A personal learning assistant built with the Claude Agent SDK (Python) to help y
 1. **Create a virtual environment** (recommended):
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 2. **Install dependencies**:
@@ -24,7 +23,6 @@ A personal learning assistant built with the Claude Agent SDK (Python) to help y
 
 3. **Set up your API key**:
    - Copy `.env.example` to `.env`
-   - Add your Anthropic API key from [console.anthropic.com](https://console.anthropic.com/)
 
 4. **Run the agent**:
    ```bash
@@ -64,20 +62,10 @@ learning-assistant-agent/
 └── README.md
 ```
 
-## Learning Path
-
-This project teaches you:
-1. **Agent SDK Basics**: Creating and configuring agents
-2. **Tool Integration**: Using filesystem, web search, and bash tools
-3. **Context Management**: Handling long conversations and memory
-4. **System Prompts**: Defining agent behavior and personality
-5. **Production Patterns**: Error handling and session management
-
-## Next Steps
+## Coming up
 
 - [ ] Run the agent and save your first learning note
 - [ ] Query your knowledge base
 - [ ] Generate your first quiz
 - [ ] Customize the system prompt for your learning style
 - [ ] Add custom tools or integrations (MCP)
-# learning-_assistant_agent

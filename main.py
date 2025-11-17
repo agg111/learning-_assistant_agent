@@ -11,7 +11,14 @@ A personal learning assistant that helps you:
 import asyncio
 import os
 from dotenv import load_dotenv
-from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
+from claude_agent_sdk import (
+    ClaudeSDKClient,
+    ClaudeAgentOptions,
+    AssistantMessage,
+    ResultMessage,
+    TextBlock,
+    ToolUseBlock,
+)
 
 # Load environment variables
 load_dotenv()
@@ -46,8 +53,8 @@ File Organization:
     # Enable tools the agent needs
     allowed_tools=["filesystem", "web_search", "bash"],
 
-    # Set working directory
-    working_directory=os.getcwd(),
+    # Set working directory (use 'cwd' not 'working_directory')
+    cwd=os.getcwd(),
 
     # Permission mode - 'default' requires confirmation for file writes
     permission_mode="default",
@@ -80,13 +87,15 @@ Let's start by creating a folder structure for my learning notes."""
 
         # Stream and display the response
         async for message in client.receive_response():
-            if message.type == "text":
-                print(f"\n🤖 Assistant: {message.content}\n")
-            elif message.type == "tool_use":
-                print(f"🔧 Using tool: {message.tool_name}")
-            elif message.type == "tool_result":
-                if hasattr(message, 'error') and message.error:
-                    print(f"❌ Tool error: {message.error}")
+            if isinstance(message, AssistantMessage):
+                for block in message.content:
+                    if isinstance(block, TextBlock):
+                        print(f"\n🤖 Assistant: {block.text}\n")
+                    elif isinstance(block, ToolUseBlock):
+                        print(f"🔧 Using tool: {block.name}")
+            elif isinstance(message, ResultMessage):
+                if message.is_error:
+                    print(f"❌ Error occurred")
 
         # Interactive loop for continued conversation
         print("\n" + "="*60)
@@ -109,10 +118,12 @@ Let's start by creating a folder structure for my learning notes."""
             # Stream and display response
             print()
             async for message in client.receive_response():
-                if message.type == "text":
-                    print(f"🤖 {message.content}")
-                elif message.type == "tool_use":
-                    print(f"🔧 Using tool: {message.tool_name}")
+                if isinstance(message, AssistantMessage):
+                    for block in message.content:
+                        if isinstance(block, TextBlock):
+                            print(f"🤖 {block.text}")
+                        elif isinstance(block, ToolUseBlock):
+                            print(f"🔧 Using tool: {block.name}")
             print()
 
 
@@ -140,10 +151,12 @@ async def demo_mode():
             await client.query(query)
 
             async for message in client.receive_response():
-                if message.type == "text":
-                    print(f"\n🤖 {message.content}\n")
-                elif message.type == "tool_use":
-                    print(f"🔧 Using: {message.tool_name}")
+                if isinstance(message, AssistantMessage):
+                    for block in message.content:
+                        if isinstance(block, TextBlock):
+                            print(f"\n🤖 {block.text}\n")
+                        elif isinstance(block, ToolUseBlock):
+                            print(f"🔧 Using: {block.name}")
 
             # Pause between queries
             if i < len(demo_queries):
